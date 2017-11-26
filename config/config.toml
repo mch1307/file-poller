@@ -1,0 +1,4 @@
+SourceDir = "c:\\temp\\incoming"
+DestDir = "c:\\temp\\poll"
+LogDir = "c:\\temp\\log"
+LogLevel = "DEBUG"
