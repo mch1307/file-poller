@@ -107,7 +107,7 @@ func prepareMove(path string, info os.FileInfo, err error) error {
 	return nil
 }
 
-func rename(src, dest string) error {
+func rename(src, dest string) (copiedBytes int64, err error) {
 	from, err := os.Open(src)
 	if err != nil {
 		log.Fatal(err)
@@ -118,7 +118,7 @@ func rename(src, dest string) error {
 	}
 	defer to.Close()
 
-	_, err = io.Copy(to, from)
+	copiedBytes, err = io.Copy(to, from)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -127,7 +127,7 @@ func rename(src, dest string) error {
 	if err != nil {
 		log.Fatal("error removing src: ", src, err)
 	}
-	return err
+	return 0, err
 }
 
 func daemon() {
@@ -136,9 +136,12 @@ func daemon() {
 		case <-ticker.C:
 			dirScanEntries = makeDirScanEntries()
 			_ = filepath.Walk(config.Conf.SourceDir, prepareMove)
-			fmt.Println(dirScanEntries)
+			log.Debug("entries to process: ", dirScanEntries)
 			for _, v := range dirScanEntries {
-				rename(v.srcFile, v.destFile)
+				copiedBytes, _ := rename(v.srcFile, v.destFile)
+				if copiedBytes != v.fileSize {
+					log.Error("bytes copied do not match for ", v)
+				}
 				log.Info("processing file ", v.srcFile, " to ", v.destFile, ", original timestamp: ", v.fileTS)
 			}
 		case <-quit:
