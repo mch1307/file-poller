@@ -142,7 +142,7 @@ func daemon() {
 				if copiedBytes != v.fileSize {
 					log.Error("bytes copied do not match for ", v)
 				}
-				log.Info("processing file ", v.srcFile, " to ", v.destFile, ", original timestamp: ", v.fileTS)
+				log.Info("processing file", v.srcFile, "to", v.destFile, ", original timestamp: ", v.fileTS, "original size:", v.fileSize)
 			}
 		case <-quit:
 			ticker.Stop()
