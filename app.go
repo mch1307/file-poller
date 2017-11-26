@@ -127,7 +127,7 @@ func rename(src, dest string) (copiedBytes int64, err error) {
 	if err != nil {
 		log.Fatal("error removing src: ", src, err)
 	}
-	return 0, err
+	return copiedBytes, err
 }
 
 func daemon() {
@@ -140,7 +140,7 @@ func daemon() {
 			for _, v := range dirScanEntries {
 				copiedBytes, _ := rename(v.srcFile, v.destFile)
 				if copiedBytes != v.fileSize {
-					log.Error("bytes copied do not match for ", v)
+					log.Error("bytes copied do not match for ", copiedBytes, v.fileSize)
 				}
 				log.Info("processing file", v.srcFile, "to", v.destFile, ", original timestamp: ", v.fileTS, "original size:", v.fileSize)
 			}
